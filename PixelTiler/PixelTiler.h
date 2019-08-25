@@ -12,18 +12,18 @@ public:
 	
 	// This MUST be called before calling tilePixels(). Tiles must be images of equal size, 
 	// their side length must be divisible by 2. if image is grayscale it adopts the pixel color.
-	// Files must be named: <prefix>_outer.<ext>, <prefix>_inner.<ext>, <prefix>_flat.<ext>.
-	void loadTiles(std::string tilePrefix);
+	// Files must be named: <prefix>_outer.png, <prefix>_inner.png, <prefix>_flat.png.
+	void loadTiles(const std::string& tilePrefix);
 	
 	// Can be called optionally to set the order of color layers to be processed.
 	// If not called the order is set automatically.
-	void setCustomColorLayerOrder(std::list<cv::Scalar> colorLayers);
+	void setColorLayerOrder(const std::list<cv::Scalar>& colorLayers);
 	
 	// This version lets the user pick layer order manually.
-	void setCustomColorLayerOrder();
+	void setColorLayerOrderManually();
 
 	// This does the tiling and returns the resulting 3-channeled image.
-	cv::Mat tilePixels(std::string inputFilePath);
+	cv::Mat tilePixels(const std::string& inputFilePath);
 
 	// This version uses an already loaded cv::Mat.
 	cv::Mat tilePixels(cv::Mat input);

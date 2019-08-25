@@ -5,22 +5,29 @@ PixelTiler::PixelTiler()
 	_reset();
 }
 
-void PixelTiler::loadTiles(std::string tilePrefix)
+void PixelTiler::loadTiles(const std::string& tilePrefix)
 {
-	//TODO
+	std::string outerName = tilePrefix + "_outer.png";
+	std::string innerName = tilePrefix + "_inner.png";
+	std::string flatName = tilePrefix + "_flat.png";
+	_outerTile = cv::imread(outerName, CV_LOAD_IMAGE_UNCHANGED);
+	_innerTile = cv::imread(innerName, CV_LOAD_IMAGE_UNCHANGED);
+	_flatTile = cv::imread(flatName, CV_LOAD_IMAGE_UNCHANGED);
 }
 
-void PixelTiler::setCustomColorLayerOrder(std::list<cv::Scalar> colorLayers)
+void PixelTiler::setColorLayerOrder(const std::list<cv::Scalar>& colorLayers)
 {
-	//TODO
+	_layerOrder = colorLayers;
 }
 
-void PixelTiler::setCustomColorLayerOrder()
+void PixelTiler::setColorLayerOrderManually()
 {
+	std::list<cv::Scalar> colorLayers;
 	//TODO
+	setColorLayerOrder(colorLayers);
 }
 
-cv::Mat PixelTiler::tilePixels(std::string inputFilePath)
+cv::Mat PixelTiler::tilePixels(const std::string& inputFilePath)
 {
 	//TODO
 	return cv::Mat();

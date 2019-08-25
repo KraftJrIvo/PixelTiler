@@ -46,6 +46,9 @@ int main(int argc, char *argv[])
 		break;
 	}
 
+	// Letting user to manually set the color layer order.
+	pt.setColorLayerOrderManually();
+
 	// Doing the tiling.
 	const size_t& sz = tilesPrefixes.size();
 	for (int i = 0; i < sz; ++i)
