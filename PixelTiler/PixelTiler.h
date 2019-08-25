@@ -4,20 +4,49 @@
 
 #include <vector>
 
+enum PixelTileType
+{
+	NO_TYPE,
+	OUTER,
+	INNER,
+	FLAT,
+	FULL
+};
+
+enum TileDirection
+{
+	N,
+	E,
+	S,
+	W,
+	NW,
+	NE,
+	SW,
+	SE, 
+	NO_DIR
+};
+
+typedef std::pair<PixelTileType, TileDirection> TileDescription;
+
 class PixelTiler
 {
 public:
 
 	PixelTiler();
 	
-	// This MUST be called before calling tilePixels(). Tiles must be images of equal size, 
-	// their side length must be divisible by 2. if image is grayscale it adopts the pixel color.
-	// Files must be named: <prefix>_outer.png, <prefix>_inner.png, <prefix>_flat.png.
-	void loadTiles(const std::string& tilePrefix);
+	// This MUST be called before calling tilePixels(). 
+	// Tileset must have side lengths which are divisible by 4 and be like this:
+	// 
+	//  /^^\
+	//  |/\|
+	//  |\/|
+	//  \__/
+	//
+	void loadTileset(const std::string& tilesetPath);
 	
 	// Can be called optionally to set the order of color layers to be processed.
 	// If not called the order is set automatically.
-	void setColorLayerOrder(const std::list<cv::Scalar>& colorLayers);
+	void setColorLayerOrder(const std::vector<cv::Scalar>& colorLayers);
 	
 	// This version lets the user pick layer order manually.
 	void setColorLayerOrderManually();
@@ -34,14 +63,22 @@ public:
 private:
 
 	bool _tilesSet;
+	bool _tintNeeded;
 	bool _layerOrderSet;
 	
-	cv::Mat _outerTile;
-	cv::Mat _innerTile;
-	cv::Mat _flatTile;
+	cv::Mat _tileset;
+	size_t _tileWidth, _tileHeight;
+	size_t _imgWidth, _imgHeight;
 
-	std::list<cv::Scalar> _layerOrder;
-	std::vector<std::vector<std::vector<cv::Mat>>> _pixelLayers;
+	std::vector<cv::Scalar> _layerOrder;
+	std::vector<std::vector<std::vector<uchar>>> _pixelLayers;
+	std::vector<std::vector<std::vector<TileDescription>>> _tileLayers;
 
 	void _reset();
+	void _setColorLayersAutomatically(cv::Mat img);
+	void _setTileLayer(int id, cv::Mat img, const cv::Scalar& color, cv::Mat correction = cv::Mat());
+	void _addTransparentLayer(cv::Mat bg, cv::Mat layer, cv::Point2i pos);
+	cv::Rect getRectFromDiagDir(TileDescription&);
+	cv::Mat _tintTileset(cv::Scalar color);
+	cv::Mat _buildImage();
 };

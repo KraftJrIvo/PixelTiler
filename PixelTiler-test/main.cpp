@@ -1,23 +1,22 @@
 #include "../PixelTiler/PixelTiler.h"
 
-#define ARG_COUNT 4
+#define ARG_COUNT 3
 
 void printNeededArguments()
 {
-	std::cout << "Usage: PixelTiler-test.exe <image file to process> <tiles folder path w/o last slash> <desired tiles prefixes separated by space in desired order>";
+	std::cout << "Usage: PixelTiler-test.exe <image file to process> <desired tileset paths separated by space in desired order>";
 }
 
 int main(int argc, char *argv[])
 {
-	std::string imagePath, tilesPath;
-	std::vector<std::string> tilesPrefixes;
+	std::string imagePath;
+	std::vector<std::string> tilesets;
 
 	// Handling input parameters.
 	if (argc < ARG_COUNT)
 	{
 		imagePath = "test-image.png";
-		tilesPath = "test-tiles";
-		tilesPrefixes.push_back("default");
+		tilesets.push_back("test-tileset.png");
 
 		printNeededArguments();
 		std::cout << "Too few parameters. Using default settings.";
@@ -25,9 +24,8 @@ int main(int argc, char *argv[])
 	else
 	{
 		imagePath = argv[1];
-		tilesPath = argv[2];
-		for (int i = 3; i < argc; ++i)
-			tilesPrefixes.push_back(argv[i]);
+		for (int i = 2; i < argc; ++i)
+			tilesets.push_back(argv[i]);
 	}
 
 	PixelTiler pt;
@@ -47,23 +45,23 @@ int main(int argc, char *argv[])
 	}
 
 	// Letting user to manually set the color layer order.
-	pt.setColorLayerOrderManually();
+	//pt.setColorLayerOrderManually();
 
 	// Doing the tiling.
-	const size_t& sz = tilesPrefixes.size();
+	const size_t& sz = tilesets.size();
 	for (int i = 0; i < sz; ++i)
 	{
-		pt.loadTiles(tilesPrefixes[i]);
+		pt.loadTileset(tilesets[i]);
 		img = pt.tilePixels(img);
 	}
 
 	// Letting user correct the final tiling.
-	img = pt.correctTiledLayers();
+	//img = pt.correctTiledLayers();
 
 	// Forming the output file name and saving.
 	std::string outName = imagePath.substr(0, imagePath.find('.'));
 	for (int i = 0; i < sz; ++i)
-		outName += tilesPrefixes[i];
+		outName += tilesets[i];
 	outName += ".png";
 	cv::imwrite(outName, img);
 
