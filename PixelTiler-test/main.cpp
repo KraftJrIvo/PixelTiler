@@ -4,7 +4,7 @@
 
 void printNeededArguments()
 {
-	std::cout << "Usage: PixelTiler-test.exe <image file to process> <desired tileset paths separated by space in desired order>";
+	std::cout << "Usage: PixelTiler-test.exe <.png image file to process (w/o extension)> <desired tileset .png paths separated by space in desired order (w/o extension)>";
 }
 
 int main(int argc, char *argv[])
@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 	if (argc < ARG_COUNT)
 	{
 		imagePath = "test-image.png";
-		tilesets.push_back("test-tileset.png");
+		tilesets.push_back("test-tileset");
 
 		printNeededArguments();
 		std::cout << "Too few parameters. Using default settings.";
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 	const size_t& sz = tilesets.size();
 	for (int i = 0; i < sz; ++i)
 	{
-		pt.loadTileset(tilesets[i]);
+		pt.loadTileset(tilesets[i] + ".png");
 		img = pt.tilePixels(img);
 	}
 
@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
 	// Forming the output file name and saving.
 	std::string outName = imagePath.substr(0, imagePath.find('.'));
 	for (int i = 0; i < sz; ++i)
-		outName += tilesets[i];
+		outName += "_" + tilesets[i];
 	outName += ".png";
 	cv::imwrite(outName, img);
 
