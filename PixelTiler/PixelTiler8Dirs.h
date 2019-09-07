@@ -1,8 +1,6 @@
 #pragma once
 
-#include <opencv2/opencv.hpp>
-
-#include <vector>
+#include "IPixelTiler.h"
 
 enum PixelTileType
 {
@@ -28,11 +26,11 @@ enum TileDirection
 
 typedef std::pair<PixelTileType, TileDirection> TileDescription;
 
-class PixelTiler
+class PixelTiler8Dirs : public IPixelTiler
 {
 public:
 
-	PixelTiler();
+	PixelTiler8Dirs();
 	
 	// This MUST be called before calling tilePixels(). 
 	// Tileset must have side lengths which are divisible by 4 and be like this:

@@ -15,12 +15,39 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PixelTiler.h">
+    <ClInclude Include="TilingAlgorithm.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TilingRule.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TilingRuleset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IPixelTiler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PixelTiler8Dirs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomPixelTiler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="PixelTiler.cpp">
+    <ClCompile Include="TilingAlgorithm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TilingRuleset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TilingRule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelTiler8Dirs.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomPixelTiler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

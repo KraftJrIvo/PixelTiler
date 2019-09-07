@@ -1,11 +1,11 @@
-﻿#include "PixelTiler.h"
+﻿#include "PixelTiler8Dirs.h"
 
-PixelTiler::PixelTiler()
+PixelTiler8Dirs::PixelTiler8Dirs()
 {
 	_reset();
 }
 
-void PixelTiler::loadTileset(const std::string& tilesetPath)
+void PixelTiler8Dirs::loadTileset(const std::string& tilesetPath)
 {
 	_reset();
 	_tileset = cv::imread(tilesetPath, CV_LOAD_IMAGE_UNCHANGED);
@@ -14,20 +14,20 @@ void PixelTiler::loadTileset(const std::string& tilesetPath)
 	_tileHeight = _tileset.rows / 4;
 }
 
-void PixelTiler::setColorLayerOrder(const std::vector<cv::Scalar>& colorLayers)
+void PixelTiler8Dirs::setColorLayerOrder(const std::vector<cv::Scalar>& colorLayers)
 {
 	_layerOrder = colorLayers;
 	_layerOrderSet = true;
 }
 
-void PixelTiler::setColorLayerOrderManually()
+void PixelTiler8Dirs::setColorLayerOrderManually()
 {
 	std::vector<cv::Scalar> colorLayers;
 	//TODO
 	setColorLayerOrder(colorLayers);
 }
 
-cv::Mat PixelTiler::tilePixels(const std::string& inputFilePath)
+cv::Mat PixelTiler8Dirs::tilePixels(const std::string& inputFilePath)
 {
 	cv::Mat img = cv::imread(inputFilePath, CV_LOAD_IMAGE_UNCHANGED);
 
@@ -47,7 +47,7 @@ cv::Mat PixelTiler::tilePixels(const std::string& inputFilePath)
 	return tilePixels(img);
 }
 
-cv::Mat PixelTiler::tilePixels(cv::Mat input)
+cv::Mat PixelTiler8Dirs::tilePixels(cv::Mat input)
 {
 	_imgWidth = input.cols;
 	_imgHeight = input.rows;
@@ -62,13 +62,13 @@ cv::Mat PixelTiler::tilePixels(cv::Mat input)
 	return _buildImage();
 }
 
-cv::Mat PixelTiler::correctTiledLayers()
+cv::Mat PixelTiler8Dirs::correctTiledLayers()
 {
 	//TODO
 	return cv::Mat();
 }
 
-void PixelTiler::_reset()
+void PixelTiler8Dirs::_reset()
 {
 	_tilesSet = false;
 	_layerOrderSet = false;
@@ -82,7 +82,7 @@ void PixelTiler::_reset()
 	_tileLayers.clear();
 }
 
-void PixelTiler::_setColorLayersAutomatically(cv::Mat img)
+void PixelTiler8Dirs::_setColorLayersAutomatically(cv::Mat img)
 {
 	std::vector<cv::Scalar> layerOrder;
 
@@ -119,7 +119,7 @@ void PixelTiler::_setColorLayersAutomatically(cv::Mat img)
 	setColorLayerOrder(layerOrder);
 }
 
-void PixelTiler::_setTileLayer(int id, cv::Mat img, const cv::Scalar& color, cv::Mat correction)
+void PixelTiler8Dirs::_setTileLayer(int id, cv::Mat img, const cv::Scalar& color, cv::Mat correction)
 {
 	const size_t& w = img.cols;
 	const size_t& h = img.rows;
@@ -251,7 +251,7 @@ void PixelTiler::_setTileLayer(int id, cv::Mat img, const cv::Scalar& color, cv:
 		_tileLayers.push_back(tileLayer);
 }
 
-void PixelTiler::_addTransparentLayer(cv::Mat bg, cv::Mat layer, cv::Point2i pos) {
+void PixelTiler8Dirs::_addTransparentLayer(cv::Mat bg, cv::Mat layer, cv::Point2i pos) {
 	cv::Mat mask;
 	std::vector<cv::Mat> layers;
 
@@ -262,7 +262,7 @@ void PixelTiler::_addTransparentLayer(cv::Mat bg, cv::Mat layer, cv::Point2i pos
 	layer.copyTo(bg.rowRange(pos.y, pos.y + layer.rows).colRange(pos.x, pos.x + layer.cols), mask);
 }
 
-cv::Rect PixelTiler::getRectFromDiagDir(TileDescription& descr)
+cv::Rect PixelTiler8Dirs::getRectFromDiagDir(TileDescription& descr)
 {
 	auto type = descr.first;
 	auto dir = descr.second;
@@ -288,7 +288,7 @@ cv::Rect PixelTiler::getRectFromDiagDir(TileDescription& descr)
 	return cv::Rect(_tileWidth + (dir % 2) * _tileWidth, _tileHeight + (dir / 2) * _tileHeight, _tileWidth, _tileHeight);
 }
 
-cv::Mat PixelTiler::_tintTileset(cv::Scalar color)
+cv::Mat PixelTiler8Dirs::_tintTileset(cv::Scalar color)
 {
 	cv::Mat result = _tileset.clone();
 	const size_t& w = _tileset.cols;
@@ -307,7 +307,7 @@ cv::Mat PixelTiler::_tintTileset(cv::Scalar color)
 	return result;
 }
 
-cv::Mat PixelTiler::_buildImage()
+cv::Mat PixelTiler8Dirs::_buildImage()
 {
 	cv::Mat result(_imgHeight * _tileHeight * 2, _imgWidth * _tileWidth * 2, CV_8UC4, cv::Scalar(0, 0, 0, 0));
 

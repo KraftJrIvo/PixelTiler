@@ -1,10 +1,10 @@
-#include "../PixelTiler/PixelTiler.h"
+#include "../PixelTiler/PixelTiler8Dirs.h"
 
 #define ARG_COUNT 3
 
 void printNeededArguments()
 {
-	std::cout << "Usage: PixelTiler-test.exe <.png image file to process (w/o extension)> <desired tileset .png paths separated by space in desired order (w/o extension)>";
+	std::cout << "Usage: PixelTiler8Dirs-test.exe <.png image file to process (w/o extension)> <desired tileset .png paths separated by space in desired order (w/o extension)>";
 }
 
 int main(int argc, char *argv[])
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 			tilesets.push_back(argv[i]);
 	}
 
-	PixelTiler pt;
+	PixelTiler8Dirs pt;
 
 	// Making sure the input image has right amount of channels.
 	cv::Mat img = cv::imread(imagePath, CV_LOAD_IMAGE_UNCHANGED);
