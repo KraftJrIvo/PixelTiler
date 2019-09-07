@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 	// Handling input parameters.
 	if (argc < MIN_ARG_COUNT)
 	{
-		rules.push_back("cross");
+		rules.push_back("test");
 		tilesets.push_back("test");
 		imagePath = "img";
 
@@ -50,14 +50,14 @@ int main(int argc, char *argv[])
 	CustomPixelTiler cpt;
 
 	// Making sure the input image has right amount of channels.
-	cv::Mat img = cv::imread(imagePath + ".png", CV_LOAD_IMAGE_UNCHANGED);
+	cv::Mat img = cv::imread(imagePath + ".png", cv::IMREAD_UNCHANGED);
 	switch (img.channels())
 	{
 	case 1:
-		cv::cvtColor(img, img, CV_GRAY2BGRA);
+		cv::cvtColor(img, img, cv::COLOR_GRAY2BGRA);
 		break;
 	case 3:
-		cv::cvtColor(img, img, CV_BGR2BGRA);
+		cv::cvtColor(img, img, cv::COLOR_BGR2BGRA);
 		break;
 	default:
 		break;

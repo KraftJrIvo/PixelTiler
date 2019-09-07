@@ -9,7 +9,7 @@ void CustomPixelTiler::loadTilesetAndAlgorithm(const std::string& algoPath, cons
 {
 	_reset();
 	if (!tilesetPath.empty())
-		_tileset = cv::imread(tilesetPath, CV_LOAD_IMAGE_UNCHANGED);
+		_tileset = cv::imread(tilesetPath, cv::IMREAD_UNCHANGED);
 	_algo = TilingAlgorithm(algoPath, _tileset);
 }
 
@@ -28,16 +28,16 @@ void CustomPixelTiler::setColorLayerOrderManually()
 
 cv::Mat CustomPixelTiler::tilePixels(const std::string& inputFilePath)
 {
-	cv::Mat img = cv::imread(inputFilePath, CV_LOAD_IMAGE_UNCHANGED);
+	cv::Mat img = cv::imread(inputFilePath, cv::IMREAD_UNCHANGED);
 
 	// Making sure the input image has right amount of channels (4).
 	switch (img.channels())
 	{
 	case 1:
-		cv::cvtColor(img, img, CV_GRAY2BGRA);
+		cv::cvtColor(img, img, cv::COLOR_GRAY2BGRA);
 		break;
 	case 3:
-		cv::cvtColor(img, img, CV_BGR2BGRA);
+		cv::cvtColor(img, img, cv::COLOR_BGR2BGRA);
 		break;
 	default:
 		break;

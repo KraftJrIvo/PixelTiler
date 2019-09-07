@@ -14,4 +14,6 @@ public:
 private:
 	std::list<TilingRule> _rules;
 	cv::Size2f _sizeModifier;
+	
+	cv::Mat _prepareROI(cv::Mat, cv::Rect);
 };

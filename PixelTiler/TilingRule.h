@@ -103,12 +103,14 @@ public:
 	cv::Mat apply(cv::Mat);
 	cv::Size2f getSizeModifier() const;
 	cv::Rect getRectToReplace() const;
+	cv::Rect getRectToCheck() const;
 
 private:
 
 	std::list<TilingCondition> _conditions;
 	std::map<int, TilingGroupCondition> _groupConditions;
 	TilingRuleReaction _reaction;
+	cv::Rect _rectToCheck;
 	cv::Rect _rectToReplace;
 	cv::Size2f _sizeModifier;
 };

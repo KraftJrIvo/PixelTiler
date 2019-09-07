@@ -1,5 +1,7 @@
 #include "TilingAlgorithm.h"
 
+#include <fstream>
+
 TilingAlgorithm::TilingAlgorithm(std::string filepath, cv::Mat tileset)
 {
 	std::ifstream in(filepath);
@@ -16,7 +18,7 @@ TilingAlgorithm::TilingAlgorithm(std::string filepath, cv::Mat tileset)
 		}
 		if (line.substr(0, 3) == "rul")
 		{
-			std::string filename = line.substr(3, line.length() - 4) + ".txt";
+			std::string filename = line.substr(3, line.length() - 3) + ".txt";
 			_rulesets.push_back(std::make_pair(TilingRuleset(), new TilingAlgorithm(filename, tileset)));
 		}
 		lines.push_back(line);
@@ -55,7 +57,10 @@ cv::Mat TilingAlgorithm::apply(cv::Mat input)
 		input.cols * _sizeModifier.height, CV_8UC4);
 	for (auto& result : _results)
 		result.first.copyTo(resultImg(
-			cv::Rect(result.second.x * result.first.cols, result.second.y * result.first.rows, result.first.cols, result.first.rows)
+			cv::Rect(
+				result.second.x * _sizeModifier.width,
+				result.second.y * _sizeModifier.height,
+				result.first.cols, result.first.rows)
 		));
 
 	return resultImg;

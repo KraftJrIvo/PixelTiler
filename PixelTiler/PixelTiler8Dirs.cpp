@@ -8,7 +8,7 @@ PixelTiler8Dirs::PixelTiler8Dirs()
 void PixelTiler8Dirs::loadTileset(const std::string& tilesetPath)
 {
 	_reset();
-	_tileset = cv::imread(tilesetPath, CV_LOAD_IMAGE_UNCHANGED);
+	_tileset = cv::imread(tilesetPath, cv::IMREAD_UNCHANGED);
 	assert(_tileset.cols % 4 == 0 && _tileset.rows % 4 == 0, "Tiles must have sides which are divisible by 4!");
 	_tileWidth = _tileset.cols / 4;
 	_tileHeight = _tileset.rows / 4;
@@ -29,16 +29,16 @@ void PixelTiler8Dirs::setColorLayerOrderManually()
 
 cv::Mat PixelTiler8Dirs::tilePixels(const std::string& inputFilePath)
 {
-	cv::Mat img = cv::imread(inputFilePath, CV_LOAD_IMAGE_UNCHANGED);
+	cv::Mat img = cv::imread(inputFilePath, cv::IMREAD_UNCHANGED);
 
 	// Making sure the input image has right amount of channels (4).
 	switch (img.channels())
 	{
 	case 1:
-		cv::cvtColor(img, img, CV_GRAY2BGRA);
+		cv::cvtColor(img, img, cv::COLOR_GRAY2BGRA);
 		break;
 	case 3:
-		cv::cvtColor(img, img, CV_BGR2BGRA);
+		cv::cvtColor(img, img, cv::COLOR_BGR2BGRA);
 		break;
 	default:
 		break;

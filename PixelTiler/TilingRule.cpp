@@ -108,6 +108,7 @@ TilingRule::TilingRule(const std::list<std::string>& lines, cv::Mat tileset)
 
 	int minX = INT_MAX, maxX = INT_MIN, minY = INT_MAX, maxY = INT_MIN;
 	int i = 0, j = 0;
+	bool xFound = false;
 	for (auto& val : allVals)
 	{
 		if (val == "?")
@@ -119,10 +120,11 @@ TilingRule::TilingRule(const std::list<std::string>& lines, cv::Mat tileset)
 		
 		if (val == "X" || val == "x")
 		{
+			xFound = true;
 			if (j < minX) minX = j;
-			if (j > maxX) maxX = j + 1;
+			if (j > maxX) maxX = j;
 			if (i < minY) minY = i;
-			if (i > maxY) maxY = i + 1;
+			if (i > maxY) maxY = i;
 		}
 		else if (val[0] >= '0' && val[0] <= '9')
 		{
@@ -176,7 +178,8 @@ TilingRule::TilingRule(const std::list<std::string>& lines, cv::Mat tileset)
 
 	_reaction = TilingRuleReaction(reactStrs, tileset);
 
-	_rectToReplace = cv::Rect(minX, minY, maxX - minX, maxY - minY);
+	_rectToCheck = cv::Rect(0, 0, w, h);
+	_rectToReplace = xFound ? cv::Rect(minX, minY, maxX - minX + 1, maxY - minY + 1) : _rectToCheck;
 
 	_sizeModifier = { 
 		float(_reaction.size.width) / float(_rectToReplace.width),
@@ -212,6 +215,11 @@ cv::Size2f TilingRule::getSizeModifier() const
 cv::Rect TilingRule::getRectToReplace() const
 {
 	return _rectToReplace;
+}
+
+cv::Rect TilingRule::getRectToCheck() const
+{
+	return _rectToCheck;
 }
 
 bool TilingCondition::applies(cv::Mat input)
