@@ -13,5 +13,5 @@ public:
 private:
 	std::list<std::pair<TilingRuleset, void*>> _rulesets;
 	std::list<TilingRuleResult> _results;
-	cv::Size2f _sizeModifier;
+	cv::Size2f _totalSizeModifier;
 };

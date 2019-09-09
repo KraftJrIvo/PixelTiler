@@ -24,6 +24,7 @@ TilingRuleset::TilingRuleset(const std::list<std::string>& lines, cv::Mat tilese
 		_lines.push_back(line);
 	}
 	_rules.push_back(TilingRule(_lines, tileset));
+	_tileset = tileset;
 }
 
 void TilingRuleset::apply(cv::Mat input, std::list<TilingRuleResult>& results)
@@ -37,20 +38,23 @@ void TilingRuleset::apply(cv::Mat input, std::list<TilingRuleResult>& results)
 	const int xTo = input.cols - replaceWindowSize.width;
 	for (int i = 0; i <= yTo; i += replaceWindowSize.height)
 		for (int j = 0; j <= xTo; j += replaceWindowSize.width)
+		{
+			auto roi = _prepareROI(input, cv::Rect(
+				j - replaceWindowSize.x,
+				i - replaceWindowSize.y,
+				checkWindowSize.width,
+				checkWindowSize.height
+			));
 			for (auto& rule : _rules)
 			{
-				auto roi = _prepareROI(input, cv::Rect(
-					j - replaceWindowSize.x, 
-					i - replaceWindowSize.y, 
-					checkWindowSize.width, 
-					checkWindowSize.height
-				));
 				if (rule.applies(roi))
 				{
-					results.push_back(std::make_pair(rule.apply(roi), cv::Point2i(j, i)));
+					results.push_back(std::make_pair(rule.apply(_tileset), cv::Point2i(j, i)));
 					break;
 				}
 			}
+
+		}
 }
 
 cv::Size2f TilingRuleset::getSizeModifier()

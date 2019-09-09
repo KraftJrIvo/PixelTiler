@@ -12,6 +12,7 @@ public:
 	cv::Size2f getSizeModifier();
 
 private:
+	cv::Mat _tileset;
 	std::list<TilingRule> _rules;
 	cv::Size2f _sizeModifier;
 	
