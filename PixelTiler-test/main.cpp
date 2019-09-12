@@ -15,8 +15,8 @@ int main(int argc, char *argv[])
 	// Handling input parameters.
 	if (argc < ARG_COUNT)
 	{
-		imagePath = "test-image.png";
-		tilesets.push_back("test-tileset");
+		imagePath = "img";
+		tilesets.push_back("test");
 
 		printNeededArguments();
 		std::cout << "Too few parameters. Using default settings.";
@@ -31,14 +31,14 @@ int main(int argc, char *argv[])
 	PixelTiler8Dirs pt;
 
 	// Making sure the input image has right amount of channels.
-	cv::Mat img = cv::imread(imagePath, CV_LOAD_IMAGE_UNCHANGED);
+	cv::Mat img = cv::imread(imagePath + ".png", cv::IMREAD_UNCHANGED);
 	switch (img.channels())
 	{
 	case 1:
-		cv::cvtColor(img, img, CV_GRAY2BGRA); 
+		cv::cvtColor(img, img, cv::COLOR_GRAY2BGRA);
 		break;
 	case 3:
-		cv::cvtColor(img, img, CV_BGR2BGRA); 
+		cv::cvtColor(img, img, cv::COLOR_BGR2BGRA);
 		break;
 	default:
 		break;

@@ -32,21 +32,23 @@ void TilingRuleset::apply(cv::Mat input, std::list<TilingRuleResult>& results)
 	if (!_rules.size())
 		return;
 
-	auto checkWindowSize = _rules.back().getRectToCheck();
-	auto replaceWindowSize = _rules.back().getRectToReplace();
+	auto replaceWindow = _rules.back().getRectToReplace();
+	auto replaceWindowSize = cv::Size2i(replaceWindow.width, replaceWindow.height);
 	const int yTo = input.rows - replaceWindowSize.height;
 	const int xTo = input.cols - replaceWindowSize.width;
 	for (int i = 0; i <= yTo; i += replaceWindowSize.height)
 		for (int j = 0; j <= xTo; j += replaceWindowSize.width)
 		{
-			auto roi = _prepareROI(input, cv::Rect(
-				j - replaceWindowSize.x,
-				i - replaceWindowSize.y,
-				checkWindowSize.width,
-				checkWindowSize.height
-			));
 			for (auto& rule : _rules)
 			{
+				replaceWindow = rule.getRectToReplace();
+				auto checkWindowSize = rule.getRectToCheck();
+				auto roi = _prepareROI(input, cv::Rect(
+					j - replaceWindow.x,
+					i - replaceWindow.y,
+					checkWindowSize.width,
+					checkWindowSize.height
+				));
 				if (rule.applies(roi))
 				{
 					results.push_back(std::make_pair(rule.apply(_tileset), cv::Point2i(j, i)));
