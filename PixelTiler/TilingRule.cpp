@@ -178,6 +178,21 @@ TilingRule::TilingRule(const std::list<std::string>& lines, cv::Mat tileset)
 
 	_reaction = TilingRuleReaction(reactStrs, tileset);
 
+	for (auto& line : reactStrs)
+	{
+		if (line[0] == '$')
+		{
+			std::list<std::string> subline = { "img" + line.substr(line.find(' ')) };
+			auto react = TilingRuleReaction(subline, tileset);
+			if (line[1] == '9')
+				_rotations.push_back(std::make_pair(CONDROT_90, react));
+			else if (line[1] == '1')
+				_rotations.push_back(std::make_pair(CONDROT_180, react));
+			else
+				_rotations.push_back(std::make_pair(CONDROT_270, react));
+		}
+	}
+
 	_rectToCheck = cv::Rect(0, 0, w, h);
 	_rectToReplace = xFound ? cv::Rect(minX, minY, maxX - minX + 1, maxY - minY + 1) : _rectToCheck;
 
@@ -222,10 +237,49 @@ cv::Rect TilingRule::getRectToCheck() const
 	return _rectToCheck;
 }
 
+void TilingRule::setReaction(TilingRuleReaction reaction)
+{
+	_reaction = reaction;
+}
+
+const std::list<std::pair<TilingRuleRotation, TilingRuleReaction>>& TilingRule::getRotations() const
+{
+	return _rotations;
+}
+
+void TilingRule::rotate(TilingRuleRotation rot)
+{
+	for (auto& cond : _conditions)
+		cond.rotate(_rectToCheck.size(), rot);
+
+	for (auto& gcond : _groupConditions)
+		gcond.second.rotate(_rectToCheck.size(), rot);
+	
+	int x = (rot == CONDROT_270) ? _rectToReplace.y : (rot == CONDROT_180) ? (_rectToCheck.width - 1 - _rectToReplace.x) : (_rectToCheck.height - 1 - _rectToReplace.y);
+	int y = (rot == CONDROT_90) ? _rectToReplace.x : (rot == CONDROT_180) ? (_rectToCheck.height - 1 - _rectToReplace.y) : (_rectToCheck.width - 1 - _rectToReplace.x);
+
+	if (rot == CONDROT_90)
+		_rectToReplace = cv::Rect(x, y, _rectToReplace.height, _rectToReplace.width);
+	else if (rot == CONDROT_180)
+		_rectToReplace = cv::Rect(x, y,	_rectToReplace.width, _rectToReplace.height);
+	else 
+		_rectToReplace = cv::Rect(x, y,	_rectToReplace.height, _rectToReplace.width);
+
+	if (rot == CONDROT_90 || rot == CONDROT_270)
+		_rectToCheck = cv::Rect(0, 0, _rectToCheck.height, _rectToCheck.width);
+}
+
 bool TilingCondition::applies(cv::Mat input)
 {
 	const auto& pix = input.at<cv::Vec4b>(relPos.y, relPos.x);
 	return (metric != NO || pix[0] == 0) && (metric != YES || pix[0] > 0);
+}
+
+void TilingCondition::rotate(cv::Size2i window, TilingRuleRotation rot)
+{
+	int x = (rot == CONDROT_270) ? relPos.y : (rot == CONDROT_180) ? (window.width - 1 - relPos.x) : (window.height - 1 - relPos.y);
+	int y = (rot == CONDROT_90) ? relPos.x : (rot == CONDROT_180) ? (window.height - 1 - relPos.y): (window.width - 1 - relPos.x);
+	relPos = { x, y };
 }
 
 bool TilingGroupCondition::applies(cv::Mat input)
@@ -253,5 +307,15 @@ bool TilingGroupCondition::applies(cv::Mat input)
 		return count <= thresh;
 	default:
 		return false;
+	}
+}
+
+void TilingGroupCondition::rotate(cv::Size2i window, TilingRuleRotation rot)
+{
+	for (auto& pos : relPos)
+	{
+		int x = (rot == CONDROT_270) ? pos.y : (rot == CONDROT_180) ? (window.width - 1 - pos.x) : (window.height - 1 - pos.y);
+		int y = (rot == CONDROT_90) ? pos.x : (rot == CONDROT_180) ? (window.height - 1 - pos.y) : (window.width - 1 - pos.x);
+		pos = { x, y };
 	}
 }

@@ -9,6 +9,13 @@ enum TilingConditionMetric
 	YES
 };
 
+enum TilingRuleRotation
+{
+	CONDROT_90,
+	CONDROT_180,
+	CONDROT_270
+};
+
 enum TilingReactionType
 {
 	NO_TYPE,
@@ -36,6 +43,7 @@ struct TilingCondition
 		metric(m)
 	{}
 	bool applies(cv::Mat);
+	void rotate(cv::Size2i, TilingRuleRotation);
 };
 
 struct TilingGroupCondition
@@ -52,6 +60,7 @@ struct TilingGroupCondition
 	{}
 
 	bool applies(cv::Mat);
+	void rotate(cv::Size2i, TilingRuleRotation);
 };
 
 struct ReactionImage
@@ -104,11 +113,15 @@ public:
 	cv::Size2f getSizeModifier() const;
 	cv::Rect getRectToReplace() const;
 	cv::Rect getRectToCheck() const;
+	void setReaction(TilingRuleReaction);
+	const std::list<std::pair<TilingRuleRotation, TilingRuleReaction>>& getRotations() const;
+	void rotate(TilingRuleRotation);
 
 private:
 
 	std::list<TilingCondition> _conditions;
 	std::map<int, TilingGroupCondition> _groupConditions;
+	std::list<std::pair<TilingRuleRotation, TilingRuleReaction>> _rotations;
 	TilingRuleReaction _reaction;
 	cv::Rect _rectToCheck;
 	cv::Rect _rectToReplace;

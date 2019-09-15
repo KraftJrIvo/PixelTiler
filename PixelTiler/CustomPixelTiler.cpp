@@ -71,7 +71,6 @@ void CustomPixelTiler::_reset()
 {
 	_tilesSet = false;
 	_layerOrderSet = false;
-	_tintNeeded = false;
 
 	_tileset = cv::Mat();
 	_algo = TilingAlgorithm();
@@ -91,9 +90,6 @@ void CustomPixelTiler::_setColorLayersAutomatically(cv::Mat img)
 		for (int j = 0; j < w; ++j)
 		{
 			auto bgra = img.at<cv::Vec4b>(i, j);
-
-			if (uchar(bgra[0]) != uchar(bgra[1]) || uchar(bgra[1]) != uchar(bgra[2]))
-				_tintNeeded = true;
 
 			if (bgra[3] == 0)
 				continue;
@@ -161,10 +157,13 @@ cv::Mat CustomPixelTiler::_tintImage(cv::Mat input, cv::Scalar color)
 		for (int j = 0; j < w; ++j)
 		{
 			auto curVec = result.at<cv::Vec4b>(i, j);
-			float ratioB = float(color[0]) / 255.0f;
-			float ratioG = float(color[1]) / 255.0f;
-			float ratioR = float(color[2]) / 255.0f;
-			result.at<cv::Vec4b>(i, j) = cv::Vec4b(ratioB * curVec[0], ratioG * curVec[1], ratioR * curVec[2], curVec[3]);
+			if (curVec[0] == curVec[1] && curVec[1] == curVec[2])
+			{
+				float ratioB = float(color[0]) / 255.0f;
+				float ratioG = float(color[1]) / 255.0f;
+				float ratioR = float(color[2]) / 255.0f;
+				result.at<cv::Vec4b>(i, j) = cv::Vec4b(ratioB * curVec[0], ratioG * curVec[1], ratioR * curVec[2], curVec[3]);
+			}
 		}
 
 	return result;
@@ -180,8 +179,7 @@ cv::Mat CustomPixelTiler::_buildImage()
 	{
 		cv::Mat layer = _algo.apply(_pixelLayers[z]);
 
-		if (_tintNeeded)
-			layer = _tintImage(layer, _layerOrder[z]);
+		layer = _tintImage(layer, _layerOrder[z]);
 
 		if (result.empty())
 			result = layer.clone();

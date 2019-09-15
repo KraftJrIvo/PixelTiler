@@ -8,6 +8,8 @@ public:
 	TilingRuleset() = default;
 	TilingRuleset(const std::list<std::string>& lines, cv::Mat tileset);
 
+	void _addRule(std::list<std::string>& _lines, cv::Mat& tileset);
+
 	void apply(cv::Mat, std::list<TilingRuleResult>&);
 	cv::Size2f getSizeModifier();
 

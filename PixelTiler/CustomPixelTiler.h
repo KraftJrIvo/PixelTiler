@@ -24,7 +24,6 @@ public:
 private:
 
 	bool _tilesSet;
-	bool _tintNeeded;
 	bool _layerOrderSet;
 
 	cv::Mat _tileset;

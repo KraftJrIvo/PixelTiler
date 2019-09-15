@@ -10,7 +10,7 @@ TilingRuleset::TilingRuleset(const std::list<std::string>& lines, cv::Mat tilese
 		{
 			if (lines.size())
 			{
-				_rules.push_back(TilingRule(_lines, tileset));
+				_addRule(_lines, tileset);
 				_lines.clear();
 				if (_sizeModifier.width == 0 && _sizeModifier.height == 0)
 					_sizeModifier = _rules.back().getSizeModifier();
@@ -23,8 +23,24 @@ TilingRuleset::TilingRuleset(const std::list<std::string>& lines, cv::Mat tilese
 		}
 		_lines.push_back(line);
 	}
-	_rules.push_back(TilingRule(_lines, tileset));
+	_addRule(_lines, tileset);
 	_tileset = tileset;
+}
+
+void TilingRuleset::_addRule(std::list<std::string>& _lines, cv::Mat& tileset)
+{
+	_rules.push_back(TilingRule(_lines, tileset));
+
+	auto& rule = _rules.back();
+
+	auto& rots = rule.getRotations();
+
+	for (auto& rot : rots)
+	{
+		_rules.push_back(rule);
+		_rules.back().rotate(rot.first);
+		_rules.back().setReaction(rot.second);
+	}
 }
 
 void TilingRuleset::apply(cv::Mat input, std::list<TilingRuleResult>& results)
