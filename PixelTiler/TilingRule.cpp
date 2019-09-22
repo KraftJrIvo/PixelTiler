@@ -16,18 +16,16 @@ TilingRuleReaction::TilingRuleReaction(std::list<std::string> lines, cv::Mat til
 	str << rest;
 	if (type == "img")
 	{
-		_type = IMG;
 		int w, h, x, y;
 		str >> w >> h >> x >> y;
 		_img = ReactionImage(cv::Size(w, h), cv::Size(x, y));
 		int tileW = tileset.cols / _img.tilesCount.width;
 		int tileH = tileset.rows / _img.tilesCount.height;
 		size = { tileW, tileH };
+		_type = IMG;
 	}
 	else if (type == "pix")
 	{
-		_type = PIX;
-		
 		str << lines.front();
 
 		std::vector<std::string> vals((std::istream_iterator<WordDelimitedBySpace>(str)),
@@ -48,13 +46,17 @@ TilingRuleReaction::TilingRuleReaction(std::list<std::string> lines, cv::Mat til
 		for (int i = 0; i < h; ++i)
 			for (int j = 0; j < w; ++j)
 			{
-				auto& pix = pixels.at<cv::Vec4b>(i, j);
-				if (allVals[i * w + j] == "+")
+				auto& pix = pixels.at<cv::Vec4b>(i, j); 
+				auto val = allVals[i * w + j];
+				if (val == "+")
 					pix = cv::Scalar(255, 255, 255, 255);
+				else if (val != "-")
+					pix = cv::Scalar(val[0] - '0', 255, 255, 255);
 			}
 
 		_pix = ReactionPixels(pixels);
 		size = {w, h};
+		_type = PIX;
 	}
 }
 
@@ -68,7 +70,7 @@ cv::Mat TilingRuleReaction::getResult(cv::Mat tileset)
 		int tileY = tileH * _img.tileCoords.height;
 		return tileset(cv::Rect(tileX, tileY, tileW, tileH));
 	}
-	return _pix.pixels;
+	return _pix.pixels.clone();
 }
 
 TilingRule::TilingRule(const std::list<std::string>& lines, cv::Mat tileset)
@@ -211,15 +213,33 @@ bool TilingRule::applies(cv::Mat input)
 	}
 	for (auto& cond : _groupConditions)
 	{
-		if (!cond.second.applies(input))
+		if (cond.second.countApplies(input) == -1)
 			return false;
 	}
 	return true;
 }
 
-cv::Mat TilingRule::apply(cv::Mat tileset)
+cv::Mat TilingRule::apply(cv::Mat tileset, cv::Mat roi)
 {
-	return _reaction.getResult(tileset);
+	cv::Mat result = _reaction.getResult(tileset);
+
+	if (_reaction._type == PIX)
+	{
+		int w = result.cols;
+		int h = result.rows;
+		for (int i = 0; i < h; ++i)
+			for (int j = 0; j < w; ++j)
+			{
+				auto pix = result.at<cv::Vec4b>(i, j);
+				if (pix[3] > 0 && pix[0] < 255)
+				{
+					bool val = (_groupConditions[pix[0]].countApplies(roi) > 0);
+					result.at<cv::Vec4b>(i, j) = val ? cv::Scalar(255, 255, 255, 255) : cv::Scalar(0,0,0,0);
+				}
+			}
+	}
+
+	return result;
 }
 
 cv::Size2f TilingRule::getSizeModifier() const
@@ -282,7 +302,7 @@ void TilingCondition::rotate(cv::Size2i window, TilingRuleRotation rot)
 	relPos = { x, y };
 }
 
-bool TilingGroupCondition::applies(cv::Mat input)
+size_t TilingGroupCondition::countApplies(cv::Mat input)
 {
 	std::list<TilingCondition> conds;
 	
@@ -296,17 +316,17 @@ bool TilingGroupCondition::applies(cv::Mat input)
 	switch (op)
 	{
 	case GREATER:
-		return count > thresh;
+		return (count > thresh) ? count : -1;
 	case LESS:
-		return count < thresh;
+		return (count < thresh) ? count : -1;
 	case EQUALS:
-		return count == thresh;
+		return (count == thresh) ? count : -1;
 	case GREATER_OR_EQUAL:
-		return count >= thresh;
+		return (count >= thresh) ? count : -1;
 	case LESS_OR_EQUAL:
-		return count <= thresh;
+		return (count <= thresh) ? count : -1;
 	default:
-		return false;
+		return -1;
 	}
 }
 

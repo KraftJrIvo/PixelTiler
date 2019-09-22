@@ -1,13 +1,16 @@
 #pragma once
 
-#include "IPixelTiler.h"
+#include <opencv2/opencv.hpp>
+
+#include <vector>
+
 #include "TilingAlgorithm.h"
 
-class CustomPixelTiler : public IPixelTiler
+class PixelTiler
 {
 public:
 
-	CustomPixelTiler();
+	PixelTiler();
 
 	void loadTilesetAndAlgorithm(const std::string& algoPath, const std::string& tilesetPath);
 	
@@ -19,7 +22,7 @@ public:
 
 	cv::Mat tilePixels(cv::Mat input);
 
-	cv::Mat correctTiledLayers();
+	cv::Mat correctTiledLayers(cv::Size2i windowSize);
 
 private:
 

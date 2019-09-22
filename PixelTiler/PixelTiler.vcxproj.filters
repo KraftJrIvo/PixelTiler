@@ -24,13 +24,7 @@
     <ClInclude Include="TilingRuleset.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IPixelTiler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PixelTiler8Dirs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CustomPixelTiler.h">
+    <ClInclude Include="PixelTiler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -44,10 +38,7 @@
     <ClCompile Include="TilingRule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PixelTiler8Dirs.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CustomPixelTiler.cpp">
+    <ClCompile Include="PixelTiler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

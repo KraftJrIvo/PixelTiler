@@ -59,7 +59,7 @@ struct TilingGroupCondition
 		op(tco)
 	{}
 
-	bool applies(cv::Mat);
+	size_t countApplies(cv::Mat);
 	void rotate(cv::Size2i, TilingRuleRotation);
 };
 
@@ -87,6 +87,7 @@ typedef std::pair<cv::Mat, cv::Point2i> TilingRuleResult;
 
 class TilingRuleReaction
 {
+	friend class TilingRule;
 public:
 	cv::Size2i size;
 
@@ -95,7 +96,6 @@ public:
 	cv::Mat getResult(cv::Mat tileset);
 
 private:
-
 	TilingReactionType _type;
 	ReactionImage _img;
 	ReactionPixels _pix;
@@ -109,7 +109,7 @@ public:
 	TilingRule(const std::list<std::string>& lines, cv::Mat tileset);
 
 	bool applies(cv::Mat);
-	cv::Mat apply(cv::Mat);
+	cv::Mat apply(cv::Mat, cv::Mat roi);
 	cv::Size2f getSizeModifier() const;
 	cv::Rect getRectToReplace() const;
 	cv::Rect getRectToCheck() const;

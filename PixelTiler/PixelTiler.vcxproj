@@ -126,16 +126,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CustomPixelTiler.h" />
-    <ClInclude Include="IPixelTiler.h" />
+    <ClInclude Include="PixelTiler.h" />
     <ClInclude Include="TilingAlgorithm.h" />
-    <ClInclude Include="PixelTiler8Dirs.h" />
     <ClInclude Include="TilingRule.h" />
     <ClInclude Include="TilingRuleset.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CustomPixelTiler.cpp" />
-    <ClCompile Include="PixelTiler8Dirs.cpp" />
+    <ClCompile Include="PixelTiler.cpp" />
     <ClCompile Include="TilingAlgorithm.cpp" />
     <ClCompile Include="TilingRule.cpp" />
     <ClCompile Include="TilingRuleset.cpp" />
