@@ -168,6 +168,8 @@ void PixelTiler::_reset()
 	_imgWidth = _imgHeight = 0;
 
 	_layerOrder.clear();
+
+	srand(time(NULL));
 }
 
 void PixelTiler::_setColorLayersAutomatically(cv::Mat img)

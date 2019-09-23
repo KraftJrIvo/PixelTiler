@@ -50,8 +50,12 @@ TilingRuleReaction::TilingRuleReaction(std::list<std::string> lines, cv::Mat til
 				auto val = allVals[i * w + j];
 				if (val == "+")
 					pix = cv::Scalar(255, 255, 255, 255);
+				else if (val == "?")
+					pix = cv::Scalar(0, 0, 0, 127);
+				else if (val == "=")
+					pix = cv::Scalar(127, 127, 127, 255);
 				else if (val != "-")
-					pix = cv::Scalar(val[0] - '0', 255, 255, 255);
+					pix = cv::Scalar(val[0] - '0', 255, 255, 254);
 			}
 
 		_pix = ReactionPixels(pixels);
@@ -231,10 +235,18 @@ cv::Mat TilingRule::apply(cv::Mat tileset, cv::Mat roi)
 			for (int j = 0; j < w; ++j)
 			{
 				auto pix = result.at<cv::Vec4b>(i, j);
-				if (pix[3] > 0 && pix[0] < 255)
+				if (pix[3] > 0 && pix[3] < 255 && pix[0] < 255)
 				{
-					bool val = (_groupConditions[pix[0]].countApplies(roi) > 0);
-					result.at<cv::Vec4b>(i, j) = val ? cv::Scalar(255, 255, 255, 255) : cv::Scalar(0,0,0,0);
+					if (pix[3] == 127)
+					{
+						int r = (rand() % 2) ? 255 : 0;
+						result.at<cv::Vec4b>(i, j) = cv::Scalar(r, r, r, 255);
+					}
+					else
+					{
+						bool val = (_groupConditions[pix[0]].countApplies(roi) > 0);
+						result.at<cv::Vec4b>(i, j) = val ? cv::Scalar(255, 255, 255, 255) : cv::Scalar(0, 0, 0, 0);
+					}
 				}
 			}
 	}

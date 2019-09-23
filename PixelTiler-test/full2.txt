@@ -1,0 +1,5 @@
+rul: x3
+
+---
+
+rul: smooth

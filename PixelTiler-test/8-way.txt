@@ -1,0 +1,9 @@
+rul: x3
+
+---
+
+rul: corner-in
+
+---
+
+rul: corner-out

@@ -16,7 +16,7 @@ TilingAlgorithm::TilingAlgorithm(std::string filepath, cv::Mat tileset)
 			lines.clear();
 			continue;
 		}
-		if (line.substr(0, 3) == "rul")
+		while (line.substr(0, 3) == "rul")
 		{
 			std::string filename = line.substr(5, line.length() - 3) + ".txt";
 			_rulesets.push_back(std::make_pair(TilingRuleset(), new TilingAlgorithm(filename, tileset)));

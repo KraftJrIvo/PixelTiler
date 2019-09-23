@@ -1,0 +1,13 @@
+rul: full2
+
+---
+
+rul: x2
+
+---
+
+rul: corner-in
+
+---
+
+rul: corner-out

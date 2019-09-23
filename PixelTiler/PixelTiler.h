@@ -3,6 +3,8 @@
 #include <opencv2/opencv.hpp>
 
 #include <vector>
+#include <stdlib.h>
+#include <time.h>
 
 #include "TilingAlgorithm.h"
 
