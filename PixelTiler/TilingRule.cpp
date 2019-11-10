@@ -82,7 +82,7 @@ TilingRule::TilingRule(const std::list<std::string>& lines, cv::Mat tileset)
 	int h = 0;
 	for (auto& line : lines)
 	{
-		if (line[0] == 'x' || line[0] == 'X' || line[0] == '?' ||
+		if (line[0] == 'x' || line[0] == 'X' || line[0] == '?' || line[0] == '.' ||
 			line[0] == '-' || line[0] == '+' || (line[0] >= '0' && line[0] <= '9'))
 			h++;
 		else
@@ -117,14 +117,14 @@ TilingRule::TilingRule(const std::list<std::string>& lines, cv::Mat tileset)
 	bool xFound = false;
 	for (auto& val : allVals)
 	{
-		if (val == "?")
+		if (val == "?" || val == ".")
 			_conditions.push_back(TilingCondition({j, i}, ANY));
 		else if (val == "+" || val == "X")
 			_conditions.push_back(TilingCondition({j, i}, YES));
 		else if (val == "-" || val == "x")
 			_conditions.push_back(TilingCondition({j, i}, NO));
 		
-		if (val == "X" || val == "x")
+		if (val == "X" || val == "x" || val == ".")
 		{
 			xFound = true;
 			if (j < minX) minX = j;
@@ -287,8 +287,12 @@ void TilingRule::rotate(TilingRuleRotation rot)
 	for (auto& gcond : _groupConditions)
 		gcond.second.rotate(_rectToCheck.size(), rot);
 	
-	int x = (rot == CONDROT_270) ? _rectToReplace.y : (rot == CONDROT_180) ? (_rectToCheck.width - 1 - _rectToReplace.x) : (_rectToCheck.height - 1 - _rectToReplace.y);
-	int y = (rot == CONDROT_90) ? _rectToReplace.x : (rot == CONDROT_180) ? (_rectToCheck.height - 1 - _rectToReplace.y) : (_rectToCheck.width - 1 - _rectToReplace.x);
+	int x = (rot == CONDROT_270) ? _rectToReplace.y : (rot == CONDROT_180) ? 
+		(_rectToCheck.width - _rectToReplace.width - _rectToReplace.x) : 
+		(_rectToCheck.height - _rectToReplace.height - _rectToReplace.y);
+	int y = (rot == CONDROT_90) ? _rectToReplace.x : (rot == CONDROT_180) ? 
+		(_rectToCheck.height - _rectToReplace.height - _rectToReplace.y) : 
+		(_rectToCheck.width - _rectToReplace.width - _rectToReplace.x);
 
 	if (rot == CONDROT_90)
 		_rectToReplace = cv::Rect(x, y, _rectToReplace.height, _rectToReplace.width);

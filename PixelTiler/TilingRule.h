@@ -124,6 +124,7 @@ private:
 	std::list<std::pair<TilingRuleRotation, TilingRuleReaction>> _rotations;
 	TilingRuleReaction _reaction;
 	cv::Rect _rectToCheck;
+	cv::Rect _rectToIter;
 	cv::Rect _rectToReplace;
 	cv::Size2f _sizeModifier;
 };

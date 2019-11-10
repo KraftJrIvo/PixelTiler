@@ -110,9 +110,9 @@ int main(int argc, char* argv[])
 	// Handling input parameters.
 	if (argc < MIN_ARG_COUNT)
 	{
-		rules.push_back("full2");
+		rules.push_back("test");
 		tilesets.push_back("");
-		imagePath = "img";
+		imagePath = "test";
 
 		printNeededArguments();
 		std::cout << "Too few parameters. Using default settings.";

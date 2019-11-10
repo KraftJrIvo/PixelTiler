@@ -12,8 +12,11 @@ TilingAlgorithm::TilingAlgorithm(std::string filepath, cv::Mat tileset)
 		std::getline(in, line);
 		if (line == "---" || in.eof())
 		{
-			_rulesets.push_back(std::make_pair(TilingRuleset(lines, tileset), nullptr));
-			lines.clear();
+			if (lines.size())
+			{
+				_rulesets.push_back(std::make_pair(TilingRuleset(lines, tileset), nullptr));
+				lines.clear();
+			}
 			continue;
 		}
 		while (line.substr(0, 3) == "rul")

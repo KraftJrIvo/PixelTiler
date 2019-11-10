@@ -8,7 +8,7 @@ TilingRuleset::TilingRuleset(const std::list<std::string>& lines, cv::Mat tilese
 	{
 		if (line.empty())
 		{
-			if (lines.size())
+			if (_lines.size())
 			{
 				_addRule(_lines, tileset);
 				_lines.clear();
@@ -17,7 +17,7 @@ TilingRuleset::TilingRuleset(const std::list<std::string>& lines, cv::Mat tilese
 		}
 		_lines.push_back(line);
 	}
-	_addRule(_lines, tileset);
+	if (_lines.size()) _addRule(_lines, tileset);
 	if (_sizeModifier.width == 0 && _sizeModifier.height == 0)
 		_sizeModifier = _rules.back().getSizeModifier();
 	_tileset = tileset;
