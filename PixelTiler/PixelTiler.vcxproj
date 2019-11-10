@@ -126,16 +126,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="types.h" />
     <ClInclude Include="PixelTiler.h" />
     <ClInclude Include="TilingAlgorithm.h" />
+    <ClInclude Include="TilingCondition.h" />
+    <ClInclude Include="TilingGroupCondition.h" />
     <ClInclude Include="TilingRule.h" />
+    <ClInclude Include="TilingRuleReaction.h" />
     <ClInclude Include="TilingRuleset.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PixelTiler.cpp" />
     <ClCompile Include="TilingAlgorithm.cpp" />
+    <ClCompile Include="TilingCondition.cpp" />
+    <ClCompile Include="TilingGroupCondition.cpp" />
     <ClCompile Include="TilingRule.cpp" />
+    <ClCompile Include="TilingRuleReaction.cpp" />
     <ClCompile Include="TilingRuleset.cpp" />
+    <ClCompile Include="types.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

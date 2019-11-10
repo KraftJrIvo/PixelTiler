@@ -1,0 +1,13 @@
+rul: x3
+
+---
+
+rul: corner-out
+
+---
+
+rul: corner-in-2
+
+---
+
+rul: 4-edge

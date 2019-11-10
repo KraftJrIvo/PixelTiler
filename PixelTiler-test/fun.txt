@@ -1,0 +1,37 @@
+rul: x3
+
+---
+
+- - -
+X X X
+pix
++ - +
+
+X -
+X -
+X -
+pix
++
+-
++
+
+X X X
+- - -
+pix
++ - +
+
+- X
+- X
+- X
+pix
++
+-
++
+
+X X X
+X X X
+X X X
+pix
++ + +
++ - +
++ + +
