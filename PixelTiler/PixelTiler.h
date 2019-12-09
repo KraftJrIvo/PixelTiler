@@ -32,6 +32,7 @@ private:
 	bool _layerOrderSet;
 
 	cv::Mat _tileset;
+	cv::Mat _lastResult;
 	TilingAlgorithm _algo;
 	size_t _imgWidth, _imgHeight;
 
@@ -41,7 +42,8 @@ private:
 	void _reset();
 	void _setColorLayersAutomatically(cv::Mat img);
 	void _setPixelLayer(int id, cv::Mat img, const cv::Scalar& color, cv::Mat correction = cv::Mat());
-	void _addTransparentLayer(cv::Mat bg, cv::Mat layer, cv::Point2i pos);
+	void _addTransparentLayer(cv::Mat bg, cv::Mat layer, cv::Point2i pos = {0, 0});
 	cv::Mat _tintImage(cv::Mat input, cv::Scalar color);
 	cv::Mat _buildImage();
+	cv::Mat _buildImagePart(const cv::Point2i& px, int radius);
 };

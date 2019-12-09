@@ -118,6 +118,8 @@ cv::Mat PixelTiler::correctTiledLayers(cv::Size2i windowSize)
 
 	MouseData data(resultRect, cursorSize, cv::Point2f(0,0), false, false, _layerOrder.size(), curLayer);
 
+	int updateRadius = 2;
+
 	while (true)
 	{
 		curLayer = std::get<6>(data);
@@ -132,7 +134,8 @@ cv::Mat PixelTiler::correctTiledLayers(cv::Size2i windowSize)
 				if ((pixel[3] == 0 && val) || (pixel[3] > 0 && !val))
 				{
 					pixel = val ? cv::Scalar(255, 255, 255, 255) : cv::Scalar(0, 0, 0, 0);
-					lastImage = _buildImage();
+
+					lastImage = _buildImagePart(pt, 1);
 				}
 			}
 		}
@@ -267,7 +270,6 @@ cv::Mat PixelTiler::_buildImage()
 	cv::Mat result;
 
 	const size_t& nLayers = _layerOrder.size();
-
 	for (int z = 0; z < nLayers; ++z)
 	{
 		cv::Mat layer = _algo.apply(_pixelLayers[z]);
@@ -277,8 +279,54 @@ cv::Mat PixelTiler::_buildImage()
 		if (result.empty())
 			result = layer.clone();
 		else
-			_addTransparentLayer(result, layer, cv::Point2i(0, 0));
+			_addTransparentLayer(result, layer);
 	}
+
+	_lastResult = result.clone();
+
+	return result;
+}
+
+cv::Mat PixelTiler::_buildImagePart(const cv::Point2i& px, int radius)
+{
+	if (_lastResult.empty())
+		return _buildImage();
+
+	radius += 1;
+
+	cv::Rect partRect;
+	partRect.x = std::max(px.x - radius, 0);
+	partRect.y = std::max(px.y - radius, 0);
+	partRect.width = std::min(px.x + radius, _pixelLayers[0].cols - 1) - px.x + radius + 1 + (px.x - radius < 0 ? px.x - radius : 0);
+	partRect.height = std::min(px.y + radius, _pixelLayers[0].rows - 1) - px.y + radius + 1 + (px.y - radius < 0 ? px.y - radius : 0);
+
+	cv::Rect cutSides;
+	cutSides.x = std::max(radius - abs((px.x - radius < 0) ? px.x - radius : 0) - 1, 0);
+	cutSides.y = std::max(radius - abs((px.y - radius < 0) ? px.y - radius : 0) - 1, 0);
+	cutSides.width = 1 + radius - ((px.x + radius - 1 >= _pixelLayers[0].cols) ? std::min(px.x + radius + 1 - _pixelLayers[0].cols, radius - 1) : 0) + (cutSides.x == 0 ? px.x - radius + 1 : 0);
+	cutSides.height = 1 + radius - ((px.y + radius - 1 >= _pixelLayers[0].rows) ? std::min(px.y + radius + 1 - _pixelLayers[0].rows, radius - 1) : 0) + (cutSides.y == 0 ? px.y - radius + 1 : 0);
+
+	cv::Mat result = _lastResult;
+
+	const size_t& nLayers = _layerOrder.size();
+	for (int z = 0; z < nLayers; ++z)
+	{
+		cv::Mat layerPart = _pixelLayers[z](partRect);
+
+		cv::Mat layerPartResult = _algo.apply(layerPart);
+		cv::Size2i scaleOffset = { layerPartResult.cols / layerPart.cols, layerPartResult.rows / layerPart.rows };
+		
+		cv::Rect rectWithFrame = cv::Rect(scaleOffset.width * cutSides.x, scaleOffset.height * cutSides.y, scaleOffset.width * cutSides.width, scaleOffset.height * cutSides.height);
+		layerPartResult = layerPartResult(rectWithFrame);
+
+		layerPartResult = _tintImage(layerPartResult, _layerOrder[z]);
+
+		cv::Rect resultPart(scaleOffset.width * (partRect.x + cutSides.x), scaleOffset.height * (partRect.y + cutSides.y), scaleOffset.width * cutSides.width, scaleOffset.height * cutSides.height);
+		result(resultPart).setTo(cv::Scalar(0,0,0,0));
+		_addTransparentLayer(result, layerPartResult, { resultPart.x, resultPart.y });
+	}
+	
+	_lastResult = result.clone();
 
 	return result;
 }
