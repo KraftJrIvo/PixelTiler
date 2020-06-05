@@ -11,6 +11,16 @@ void printNeededArguments()
 	std::cout << "Usage: image rules:tileset rules:tileset ...";
 }
 
+void makeTransparentStuffBlack(cv::Mat img)
+{
+	for (int i = 0; i < img.rows; ++i)
+		for (int j = 0; j < img.rows; ++j)
+			if (img.at<cv::Vec4b>(i, j)[3] == 0)
+			{
+				img.at<cv::Vec4b>(i, j)[0] = img.at<cv::Vec4b>(i, j)[1] = img.at<cv::Vec4b>(i, j)[2] = 0;
+			}
+}
+
 int main(int argc, char* argv[])
 {
 	std::string imagePath;
@@ -65,6 +75,7 @@ int main(int argc, char* argv[])
 	default:
 		break;
 	}
+	makeTransparentStuffBlack(img);
 
 	// Letting user to manually set the color layer order.
 	auto colors = setColorLayerOrderManually(windowSize, img);
