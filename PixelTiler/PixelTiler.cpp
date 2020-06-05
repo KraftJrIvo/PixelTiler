@@ -81,7 +81,7 @@ cv::Mat PixelTiler::correctTiledLayers(cv::Size2i windowSize)
 	auto& layer = _pixelLayers[curLayer];
 	cv::Size2f cursorSize = { float(width) / float(layer.cols), float(height) / float(layer.rows) };
 
-	typedef std::tuple<cv::Rect, cv::Size2f, cv::Point2i, bool, bool, int, int> MouseData;
+	typedef std::tuple<cv::Rect, cv::Size2f, cv::Point2i, bool, bool, int, int, int> MouseData;
 
 	auto onMouse = [](int event, int x, int y, int, void* _data)
 	{
@@ -108,7 +108,7 @@ cv::Mat PixelTiler::correctTiledLayers(cv::Size2i windowSize)
 			std::get<4>(data) = (lmb);
 		}
 
-		if (y > rect.height && lmb)
+		if (y > std::get<7>(data) && lmb)
 		{
 			int layerID = x / 100;
 			if (layerID < std::get<5>(data))
@@ -116,7 +116,7 @@ cv::Mat PixelTiler::correctTiledLayers(cv::Size2i windowSize)
 		}
 	};
 
-	MouseData data(resultRect, cursorSize, cv::Point2f(0,0), false, false, _layerOrder.size(), curLayer);
+	MouseData data(resultRect, cursorSize, cv::Point2f(0,0), false, false, _layerOrder.size(), curLayer, windowSize.height);
 
 	int updateRadius = 2;
 
@@ -139,7 +139,6 @@ cv::Mat PixelTiler::correctTiledLayers(cv::Size2i windowSize)
 				}
 			}
 		}
-		
 		curImg.setTo(cv::Scalar(0, 0, 0, 0));
 		cv::resize(lastImage, curImg(resultRect), resultRect.size(), 0, 0, cv::InterpolationFlags::INTER_NEAREST);
 		cv::Point2i cursorPos = { 
@@ -290,7 +289,10 @@ cv::Mat PixelTiler::_buildImage()
 cv::Mat PixelTiler::_buildImagePart(const cv::Point2i& px, int radius)
 {
 	if (_lastResult.empty())
+	{
+		_lastResult = _buildImage();
 		return _buildImage();
+	}
 
 	radius += 1;
 
@@ -322,7 +324,8 @@ cv::Mat PixelTiler::_buildImagePart(const cv::Point2i& px, int radius)
 		layerPartResult = _tintImage(layerPartResult, _layerOrder[z]);
 
 		cv::Rect resultPart(scaleOffset.width * (partRect.x + cutSides.x), scaleOffset.height * (partRect.y + cutSides.y), scaleOffset.width * cutSides.width, scaleOffset.height * cutSides.height);
-		result(resultPart).setTo(cv::Scalar(0,0,0,0));
+		if (z == 0) result(resultPart).setTo(cv::Scalar(0, 0, 0, 0));
+
 		_addTransparentLayer(result, layerPartResult, { resultPart.x, resultPart.y });
 	}
 	
